@@ -1,70 +1,81 @@
 import React, { PureComponent } from 'react';
 import { Constants } from 'expo';
-import { Platform, StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { Platform, StyleSheet, Text, View, TextInput, Button, Picker } from 'react-native';
 import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 
-const Calculator = () =>
-    <View style={styles.inner_container}>
-        <View style={styles.title}>
-            <Text style={text_styles.title}>精油濃度計算機</Text>
-        </View>
-        <View style={styles.content}>
-            <View style={styles.field}>
+class Calculator extends PureComponent {
+    state = {
+        drops: 0,
+    };
+
+    render() {
+        return (
+            <View style={styles.inner_container}>
                 <View style={styles.title}>
-                    <Text style={text_styles.subtitle}>容器容量</Text>
+                    <Text style={text_styles.title}>精油濃度計算機</Text>
                 </View>
-                <View style={styles.input}>
-                    <TextInput
-                        style={{width: 150, borderColor: 'gray', borderWidth: 1}}
-                        placeholder="輸入容器容量"
-                        underlineColorAndroid='transparent' />
+                <View style={styles.content}>
+                    <View style={styles.field}>
+                        <View style={styles.title}>
+                            <Text style={text_styles.subtitle}>容器容量</Text>
+                        </View>
+                        <View style={styles.input}>
+                            <TextInput
+                                style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
+                                keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'phone-pad'}
+                                underlineColorAndroid='transparent' />
+                        </View>
+                        <View style={styles.unit}>
+                            <Text style={text_styles.subtitle}>ml</Text>
+                        </View>
+                    </View>
+                    <View style={styles.field}>
+                        <View style={styles.title}>
+                            <Text style={text_styles.subtitle}>精油濃度</Text>
+                        </View>
+                        <View style={styles.input}>
+                            <TextInput
+                                style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
+                                keyboardType='phone-pad'
+                                underlineColorAndroid='transparent' />
+                        </View>
+                        <View style={styles.unit}>
+                            <Text style={text_styles.subtitle}>%</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.field}>
+                        <View style={styles.title}>
+                            <Text style={text_styles.subtitle}>精油滴數</Text>
+                        </View>
+                        <Text style={text_styles.subtitle}>
+                            {this.state.drops}
+                        </Text>
+                        <View style={styles.unit}>
+                            <Text style={text_styles.subtitle}>滴</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.field}>
+                        <View style={styles.cal_btn}>
+                            <Button title="計算"
+                                onPress={() => this._handlePress()} />
+                        </View>
+                        <View style={styles.clear_btn}>
+                            <Button title="清除"
+                                onPress={() => this._handlePress()} />
+                        </View>
+                    </View>
                 </View>
-                <View style={styles.unit}>
-                    <Text style={text_styles.subtitle}>ml</Text>
+                <View style={styles.ad}>
+                    <Text>This is ad network</Text>
                 </View>
             </View>
-            <View style={styles.field}>
-                <View style={styles.title}>
-                    <Text style={text_styles.subtitle}>精油濃度</Text>
-                </View>
-                <View style={styles.input}>
-                    <TextInput
-                        style={{width: 150, borderColor: 'gray', borderWidth: 1}}
-                        placeholder="輸入精油濃度"
-                        underlineColorAndroid='transparent' />
-                </View>
-                <View style={styles.unit}>
-                    <Text style={text_styles.subtitle}>%</Text>
-                </View>
-            </View>
+        );
+    }
+}
 
-            <View style={styles.field}>
-                <View style={styles.title}>
-                    <Text style={text_styles.subtitle}>精油滴數</Text>
-                </View>
-                <View style={styles.input} />
-                <View style={styles.unit}>
-                    <Text style={text_styles.subtitle}>滴</Text>
-                </View>
-            </View>
-
-            <View style={styles.field}>
-                <View style={styles.cal_btn}>
-                    <Button title="計算"
-                        onPress={() => this._handlePress()} />
-                </View>
-                <View style={styles.clear_btn}>
-                    <Button title="清除"
-                        onPress={() => this._handlePress()} />
-                </View>
-            </View>
-
-        </View>
-        <View style={styles.ad}>
-            <Text>This is ad network</Text>
-        </View>
-      </View>;
-
+const CalculatorComponent = () => <Calculator />;
 const SecondRoute = () => <View style={[ styles.container, { backgroundColor: '#673ab7' } ]} />;
 
 export default class App extends PureComponent {
@@ -82,7 +93,7 @@ export default class App extends PureComponent {
   _renderHeader = props => <TabBar {...props} />;
 
   _renderScene = SceneMap({
-    '1': Calculator,
+    '1': CalculatorComponent,
     '2': SecondRoute,
     '3': SecondRoute,
   });
