@@ -5,8 +5,12 @@ import { TabViewAnimated, TabBar, SceneMap } from 'react-native-tab-view';
 
 class Calculator extends PureComponent {
     state = {
+        capacity: '',
+        percent: '',
         drops: 0,
     };
+
+    _handleCalculate = (capacity, percent) => this.setState({ drops: parseInt(capacity, 10)*(parseInt(percent, 10)/100)*20 })
 
     render() {
         return (
@@ -23,7 +27,9 @@ class Calculator extends PureComponent {
                             <TextInput
                                 style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
                                 keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'phone-pad'}
-                                underlineColorAndroid='transparent' />
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ capacity: text })}
+                                value={this.state.capacity} />
                         </View>
                         <View style={styles.unit}>
                             <Text style={text_styles.subtitle}>ml</Text>
@@ -37,7 +43,9 @@ class Calculator extends PureComponent {
                             <TextInput
                                 style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
                                 keyboardType='phone-pad'
-                                underlineColorAndroid='transparent' />
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ percent: text })}
+                                value={this.state.percent} />
                         </View>
                         <View style={styles.unit}>
                             <Text style={text_styles.subtitle}>%</Text>
@@ -59,11 +67,93 @@ class Calculator extends PureComponent {
                     <View style={styles.field}>
                         <View style={styles.cal_btn}>
                             <Button title="計算"
-                                onPress={() => this._handlePress()} />
+                                onPress={() => this._handleCalculate(this.state.capacity, this.state.percent)} />
                         </View>
                         <View style={styles.clear_btn}>
                             <Button title="清除"
-                                onPress={() => this._handlePress()} />
+                                color='grey'
+                                onPress={() => {this.setState({capacity: '', percent: ''})}} />
+                        </View>
+                    </View>
+                </View>
+                <View style={styles.ad}>
+                    <Text>This is ad network</Text>
+                </View>
+            </View>
+        );
+    }
+}
+
+class Suggestion extends PureComponent {
+    state = {
+        object: '',
+        body: '',
+        min_percent: 0,
+        max_percent: 0,
+    };
+
+    //_handlePress
+    render() {
+        return (
+            <View style={styles.inner_container}>
+                <View style={styles.title}>
+                    <Text style={text_styles.title}>精油濃度比例建議</Text>
+                </View>
+                <View style={styles.content}>
+                    <View style={styles.field}>
+                        <View style={styles.title}>
+                            <Text style={text_styles.subtitle}>使用對象</Text>
+                        </View>
+                        <View style={styles.input}>
+                            <TextInput
+                                style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
+                                keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'phone-pad'}
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ object: text })}
+                                value={this.state.object} />
+                        </View>
+                    </View>
+                    <View style={styles.field}>
+                        <View style={styles.title}>
+                            <Text style={text_styles.subtitle}>使用部位</Text>
+                        </View>
+                        <View style={styles.input}>
+                            <TextInput
+                                style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
+                                keyboardType='phone-pad'
+                                underlineColorAndroid='transparent'
+                                onChangeText={(text) => this.setState({ body: text })}
+                                value={this.state.body} />
+                        </View>
+                    </View>
+
+                    <View style={styles.field}>
+                        <View style={styles.title}>
+                            <Text style={text_styles.subtitle}>建議精油濃度</Text>
+                        </View>
+                        <Text style={text_styles.subtitle}>
+                            {this.state.min_percent}
+                        </Text>
+                        <View style={styles.unit}>
+                            <Text style={text_styles.subtitle}>% ～</Text>
+                        </View>
+                        <Text style={text_styles.subtitle}>
+                            {this.state.max_percent}
+                        </Text>
+                        <View style={styles.unit}>
+                            <Text style={text_styles.subtitle}>%</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.field}>
+                        <View style={styles.cal_btn}>
+                            <Button title="計算"
+                                onPress={() => this._handleCalculate(this.state.capacity, this.state.percent)} />
+                        </View>
+                        <View style={styles.clear_btn}>
+                            <Button title="清除"
+                                color='grey'
+                                onPress={() => {this.setState({capacity: '', percent: ''})}} />
                         </View>
                     </View>
                 </View>
@@ -76,6 +166,7 @@ class Calculator extends PureComponent {
 }
 
 const CalculatorComponent = () => <Calculator />;
+const SuggestionComponent = () => <Suggestion />;
 const SecondRoute = () => <View style={[ styles.container, { backgroundColor: '#673ab7' } ]} />;
 
 export default class App extends PureComponent {
@@ -90,11 +181,12 @@ export default class App extends PureComponent {
 
   _handleChangeTab = index => this.setState({ index });
 
+  // Inherit any props passed to it;
   _renderHeader = props => <TabBar {...props} />;
 
   _renderScene = SceneMap({
     '1': CalculatorComponent,
-    '2': SecondRoute,
+    '2': SuggestionComponent,
     '3': SecondRoute,
   });
 
