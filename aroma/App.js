@@ -14,7 +14,8 @@ class Calculator extends PureComponent {
 
     render() {
         return (
-            <View style={styles.inner_container}>
+            <View
+                style={styles.inner_container}>
                 <View style={styles.title}>
                     <Text style={text_styles.title}>精油濃度計算機</Text>
                 </View>
@@ -86,16 +87,33 @@ class Calculator extends PureComponent {
 
 class Suggestion extends PureComponent {
     state = {
-        object: '',
-        body: '',
+        object: 'adult',
+        part: 'face',
         min_percent: 0,
         max_percent: 0,
     };
 
+    minPercentMap = {
+        'adult': { 'face': 0.5, 'body': 2, 'feet': 3 },
+        'elder': { 'face': 0.25, 'body': 0.5, 'feet': 1.5 },
+    };
+
+    maxPercentMap = {
+        'adult': { 'face': 1, 'body': 6, 'feet': 10 },
+        'elder': { 'face': 0.5, 'body': 2, 'feet': 3 },
+    };
+
+    _handleSuggestion = (object, part) => this.setState(
+        {object: object, part: part, min_percent: this.minPercentMap[object][part], max_percent: this.maxPercentMap[object][part]}
+    )
+
     //_handlePress
     render() {
         return (
-            <View style={styles.inner_container}>
+            <View
+                style={styles.inner_container}
+                onLayout={() => this._handleSuggestion(this.state.object, this.state.part)}
+                >
                 <View style={styles.title}>
                     <Text style={text_styles.title}>精油濃度比例建議</Text>
                 </View>
@@ -104,26 +122,39 @@ class Suggestion extends PureComponent {
                         <View style={styles.title}>
                             <Text style={text_styles.subtitle}>使用對象</Text>
                         </View>
-                        <View style={styles.input}>
-                            <TextInput
-                                style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
-                                keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'phone-pad'}
-                                underlineColorAndroid='transparent'
-                                onChangeText={(text) => this.setState({ object: text })}
-                                value={this.state.object} />
+                        <View style={styles.dropdown}>
+                            <Picker
+                              selectedValue={this.state.object}
+                              mode='dropdown'
+                              style={styles.picker}
+                              onValueChange={(itemValue, itemIndex) => this._handleSuggestion(itemValue, this.state.part)}
+                              >
+                                <Picker.Item label='一般成人' value='adult' />
+                                <Picker.Item label='老人/兒童' value='elder' />
+                            </Picker>
+                        </View>
+                        <View style={styles.unit}>
+                            <Text style={text_styles.subtitle}> </Text>
                         </View>
                     </View>
                     <View style={styles.field}>
                         <View style={styles.title}>
                             <Text style={text_styles.subtitle}>使用部位</Text>
                         </View>
-                        <View style={styles.input}>
-                            <TextInput
-                                style={{width: 150, height: 30, borderColor: 'red', borderWidth: 1}}
-                                keyboardType='phone-pad'
-                                underlineColorAndroid='transparent'
-                                onChangeText={(text) => this.setState({ body: text })}
-                                value={this.state.body} />
+                        <View style={styles.dropdown}>
+                            <Picker
+                              selectedValue={this.state.part}
+                              mode='dropdown'
+                              style={styles.picker}
+                              onValueChange={(itemValue, itemIndex) => this._handleSuggestion(this.state.object, itemValue)}
+                              >
+                                <Picker.Item label='臉部' value='face' />
+                                <Picker.Item label='身體(脖子以下)' value='body' />
+                                <Picker.Item label='腳底' value='feet' />
+                            </Picker>
+                        </View>
+                        <View style={styles.unit}>
+                            <Text style={text_styles.subtitle}> </Text>
                         </View>
                     </View>
 
@@ -142,18 +173,6 @@ class Suggestion extends PureComponent {
                         </Text>
                         <View style={styles.unit}>
                             <Text style={text_styles.subtitle}>%</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.field}>
-                        <View style={styles.cal_btn}>
-                            <Button title="計算"
-                                onPress={() => this._handleCalculate(this.state.capacity, this.state.percent)} />
-                        </View>
-                        <View style={styles.clear_btn}>
-                            <Button title="清除"
-                                color='grey'
-                                onPress={() => {this.setState({capacity: '', percent: ''})}} />
                         </View>
                     </View>
                 </View>
@@ -249,18 +268,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  subtitle: {
   },
   input: {
     flex: 2,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  dropdown: {
+    flex: 2,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  picker: {
+    flex: 1,
   },
   unit: {
     flex: 1,
